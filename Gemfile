@@ -6,4 +6,5 @@ gem 'capistrano'
 group :development do
   gem 'rspec'
   gem 'jeweler'
+  gem 'yard'
 end
