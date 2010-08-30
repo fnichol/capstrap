@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors = ["Fletcher Nichol"]
   s.date = %q{2010-08-29}
   s.default_executable = %q{capstrap}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{A command to remotely install git, rvm, ruby, and chef-solo using capistrano.}
   s.email = %q{fnichol@nichol.ca}
   s.executables = ["capstrap"]
   s.extra_rdoc_files = [
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/capstrap",
+     "capstrap.gemspec",
      "lib/capistrano/ext/capstrap.rb",
      "lib/capistrano/ext/capstrap/apt.rb",
      "lib/capistrano/ext/capstrap/chef.rb",

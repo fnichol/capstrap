@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "capstrap"
     gem.summary = %Q{bootstrapping chef solo from capistrano}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.description = %Q{A command to remotely install git, rvm, ruby, and chef-solo using capistrano.}
     gem.email = "fnichol@nichol.ca"
     gem.homepage = "http://github.com/fnichol/capstrap"
     gem.authors = ["Fletcher Nichol"]
