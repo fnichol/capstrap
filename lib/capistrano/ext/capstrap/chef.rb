@@ -10,9 +10,8 @@ module Capstrap
             desc "Installs chef solo"
             task :solo do
               cmd = [
-                %{use default@chef --create},
-                %{gem install chef},
-                %{rvm wrapper default@chef s chef-solo chef-client}
+                %{use default@global},
+                %{gem install chef}
               ]
               rvm_run cmd.join(" && ")
             end
