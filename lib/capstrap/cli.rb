@@ -29,7 +29,7 @@ module Capstrap
       @ssh_host = ssh_host
       abort ">> HOST must be set" unless @ssh_host
 
-      invoke :ruby, [ssh_host]
+      invoke :ruby, [ssh_host], :ruby => options[:ruby], :default => true
       config.find_and_execute_task "chef:install:solo"
     end
 
