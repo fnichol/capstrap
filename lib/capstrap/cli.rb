@@ -9,7 +9,7 @@ module Capstrap
     
     desc "ruby HOST", "Install an RVM ruby on remote SSH host HOST"
     method_option "ruby", :type => :string, :banner => 
-      "Version of ruby to install.", :default => "ruby-1.8.7"
+      "Version of ruby to install.", :default => "ree-1.8.7"
     method_option "default", :type => :boolean, :banner => 
       "Set this ruby to be RVM default."
     def ruby(ssh_host)
@@ -24,7 +24,7 @@ module Capstrap
 
     desc "chefsolo HOST", "Install chef solo on remote SSH host HOST"
     method_option "ruby", :type => :string, :banner => 
-      "Version of ruby to install.", :default => "ruby-1.8.7"
+      "Version of ruby to install.", :default => "ree-1.8.7"
     def chefsolo(ssh_host)
       @ssh_host = ssh_host
       abort ">> HOST must be set" unless @ssh_host
