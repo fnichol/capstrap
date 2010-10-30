@@ -54,6 +54,10 @@ To set some other crazy configuration (the full monty with cheese):
       --config-repo=git://github.com/fnichol/chef-dna-spike.git \
       --config-path=/opt/chef/config
 
+To pull new cookbook/configuration updates and run chef-solo:
+
+    capstrap update root@zland
+
 To get more help:
 
     capstrap help
