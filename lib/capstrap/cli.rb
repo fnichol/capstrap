@@ -16,21 +16,90 @@ module Capstrap
       @ssh_host = ssh_host
       abort ">> HOST must be set" unless @ssh_host
 
+      setup_config options
+
       config.find_and_execute_task "rvm:install:#{options[:ruby]}"
       if options[:default]
         config.find_and_execute_task "rvm:default:#{options[:ruby]}"
       end
     end
 
-    desc "chefsolo HOST", "Install chef solo on remote SSH host HOST"
+    desc "chef HOST", "Install chef gem on remote SSH host HOST"
     method_option "ruby", :type => :string, :banner => 
       "Version of ruby to install.", :default => "ree-1.8.7"
-    def chefsolo(ssh_host)
+    def chef(ssh_host)
       @ssh_host = ssh_host
       abort ">> HOST must be set" unless @ssh_host
 
+      setup_config options
+
       invoke :ruby, [ssh_host], :ruby => options[:ruby], :default => true
-      config.find_and_execute_task "chef:install:solo"
+      config.find_and_execute_task "chef:install:lib"
+    end
+
+    desc "solo HOST", "Install chef cookbooks & config on remote SSH host HOST"
+    method_option "ruby", :type => :string, :banner => 
+      "Version of ruby to install.", :default => "ree-1.8.7"
+    method_option "cookbooks-repo", :type => :string, :banner => 
+      "Chef cookbooks git repository URL."
+    method_option "cookbooks-path", :type => :string,
+      :banner => "Install path to chef cookbooks git repository.",
+      :default => "/var/chef-solo"
+    method_option "config-repo", :type => :string, :banner => 
+      "Chef configuration git repository URL."
+    method_option "config-path", :type => :string,
+      :banner => "Install path to chef configuration git repository.",
+      :default => "/etc/chef"
+    def solo(ssh_host)
+      @ssh_host = ssh_host
+      abort ">> HOST must be set" unless @ssh_host
+
+      setup_config options
+
+      unless options["cookbooks-repo"]
+        abort ">> --cookbooks-repo=<git_url> must be set" 
+      end
+      unless options["config-repo"]
+        abort ">> --config-repo=<git_url> must be set"
+      end
+
+      invoke :chef, [ssh_host], :ruby => options[:ruby], :default => true
+      config.find_and_execute_task "chef:install:cookbooks"
+      config.find_and_execute_task "chef:install:config"
+    end
+
+    desc "execute HOST", "Executes chef solo config on remote SSH host HOST"
+    method_option "ruby", :type => :string, :banner => 
+      "Version of ruby to install.", :default => "ree-1.8.7"
+    method_option "cookbooks-repo", :type => :string, :banner => 
+      "Chef cookbooks git repository URL."
+    method_option "cookbooks-path", :type => :string,
+      :banner => "Install path to chef cookbooks git repository.",
+      :default => "/var/chef-solo"
+    method_option "config-repo", :type => :string, :banner => 
+      "Chef configuration git repository URL."
+    method_option "config-path", :type => :string,
+      :banner => "Install path to chef configuration git repository.",
+      :default => "/etc/chef"
+    def execute(ssh_host)
+      @ssh_host = ssh_host
+      abort ">> HOST must be set" unless @ssh_host
+
+      setup_config options
+
+      unless options["cookbooks-repo"]
+        abort ">> --cookbooks-repo=<git_url> must be set" 
+      end
+      unless options["config-repo"]
+        abort ">> --config-repo=<git_url> must be set"
+      end
+
+      invoke :solo, [ssh_host], :ruby => options[:ruby], :default => true,
+        :"cookbooks-repo" => options["cookbooks-repo"],
+        :"cookbooks-path" => options["cookbooks-path"],
+        :"config-repo" => options["config-repo"],
+        :"config-path" => options["config-path"]
+      config.find_and_execute_task "chef:execute:solo"
     end
 
   private
@@ -50,6 +119,18 @@ module Capstrap
       Capstrap::Chef.load_into(config)
 
       config
+    end
+
+    def setup_config(options)
+      [
+        {:sym => :ruby,           :opt => "ruby"},
+        {:sym => :cookbooks_repo, :opt => "cookbooks-repo"},
+        {:sym => :cookbooks_path, :opt => "cookbooks-path"},
+        {:sym => :config_repo,    :opt => "config-repo"},
+        {:sym => :config_path,    :opt => "config-path"}
+      ].each do |var|
+        config.set(var[:sym], options[var[:opt]]) if options[var[:opt]]
+      end
     end
   end
 end

@@ -5,8 +5,8 @@
 # @return [true, false] whether or not the conditional passes
 def cmd_if(test, rvm=false)
   load_rvm = ""
-  load_rvm = rvm_env
-  r = capture %{#{rvm_env} if #{test} ; then echo true; else echo false; fi}, 
+  load_rvm = "#{rvm_env} " if rvm
+  r = capture %{#{load_rvm}if #{test} ; then echo true; else echo false; fi}, 
     :shell => "bash"
   puts "  * Result is: #{r.to_s}"
   if r.to_s =~ /true/
@@ -71,6 +71,28 @@ end
 # @param [String] ruby string
 def ruby_installed?(ruby)
   cmd_if %{rvm list strings | grep -q "#{ruby}" >/dev/null}, true
+end
+
+##
+# Checks if the chef gem is installed on the remote host.
+#
+def chef_installed?
+  cmd_if %{rvm use #{ruby}@global >/dev/null && gem list --no-versions | grep -q "^chef$" >/dev/null}, true
+end
+
+
+##
+# Checks if chef cookbook repo is installed on the remote host.
+#
+def cookbooks_repo_installed?
+  cmd_test %{-d "#{cookbooks_path}"}
+end
+
+##
+# Checks if chef config repo is installed on the remote host.
+#
+def config_repo_installed?
+  cmd_test %{-d "#{config_path}"}
 end
 
 ##
