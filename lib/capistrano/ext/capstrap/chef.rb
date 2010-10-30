@@ -55,6 +55,23 @@ module Capstrap
               ]
               rvm_run cmd.join(" && ")
             end
+
+            desc "Updates and executes chef solo configuration"
+            task :update do
+              cmd = [
+                %{use #{ruby}},
+                %{cd #{cookbooks_path}},
+                %{git pull},
+                %{git submodule init},
+                %{git submodule update},
+                %{cd #{config_path}},
+                %{git submodule init},
+                %{git submodule update},
+                %{cd},
+                %{chef-solo}
+              ]
+              rvm_run cmd.join(" && ")
+            end
           end
         end
       end

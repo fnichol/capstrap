@@ -102,6 +102,24 @@ module Capstrap
       config.find_and_execute_task "chef:execute:solo"
     end
 
+    desc "update HOST", "Updates and executes chef solo on remote SSH host HOST"
+    method_option "ruby", :type => :string, :banner => 
+      "Version of ruby to install.", :default => "ree-1.8.7"
+    method_option "cookbooks-path", :type => :string,
+      :banner => "Install path to chef cookbooks git repository.",
+      :default => "/var/chef-solo"
+    method_option "config-path", :type => :string,
+      :banner => "Install path to chef configuration git repository.",
+      :default => "/etc/chef"
+    def update(ssh_host)
+      @ssh_host = ssh_host
+      abort ">> HOST must be set" unless @ssh_host
+
+      setup_config options
+
+      config.find_and_execute_task "chef:execute:update"
+    end
+
   private
   
     def config
