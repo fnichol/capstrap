@@ -38,18 +38,32 @@ module Capstrap
     end
 
     desc "solo HOST", "Install chef cookbooks & config on remote SSH host HOST"
-    method_option "ruby", :type => :string, :banner => 
-      "Version of ruby to install.", :default => "ree-1.8.7"
-    method_option "cookbooks-repo", :type => :string, :banner => 
-      "Chef cookbooks git repository URL."
+    method_option "ruby", :type => :string, 
+      :banner => "Version of ruby to install.",
+      :default => "ree-1.8.7",
+      :aliases => "-r"
+    method_option "cookbooks-repo", :type => :string,
+      :banner => "Chef cookbooks git repository URL.",
+      :aliases => "-c"
     method_option "cookbooks-path", :type => :string,
       :banner => "Install path to chef cookbooks git repository.",
-      :default => "/var/chef-solo"
-    method_option "config-repo", :type => :string, :banner => 
-      "Chef configuration git repository URL."
+      :default => "/var/chef-solo",
+      :aliases => "-p"
+    method_option "cookbooks-rake-update", :type => :boolean, :banner =>
+      "Run rake update vs. git submodule init/update when updating cookbooks repo",
+      :default => false,
+      :aliases => "-u"
+    method_option "config-repo", :type => :string,
+      :banner => "Chef configuration git repository URL.",
+      :aliases => "-C"
     method_option "config-path", :type => :string,
       :banner => "Install path to chef configuration git repository.",
-      :default => "/etc/chef"
+      :default => "/etc/chef",
+      :aliases => "-P"
+    method_option "config-rake-update", :type => :boolean, :banner =>
+      "Run rake update vs. git submodule init/update when updating config repo",
+      :default => false,
+      :aliases => "-U"
     def solo(ssh_host)
       @ssh_host = ssh_host
       abort ">> HOST must be set" unless @ssh_host
@@ -69,18 +83,32 @@ module Capstrap
     end
 
     desc "execute HOST", "Executes chef solo config on remote SSH host HOST"
-    method_option "ruby", :type => :string, :banner => 
-      "Version of ruby to install.", :default => "ree-1.8.7"
-    method_option "cookbooks-repo", :type => :string, :banner => 
-      "Chef cookbooks git repository URL."
+    method_option "ruby", :type => :string, 
+      :banner => "Version of ruby to install.",
+      :default => "ree-1.8.7",
+      :aliases => "-r"
+    method_option "cookbooks-repo", :type => :string,
+      :banner => "Chef cookbooks git repository URL.",
+      :aliases => "-c"
     method_option "cookbooks-path", :type => :string,
       :banner => "Install path to chef cookbooks git repository.",
-      :default => "/var/chef-solo"
-    method_option "config-repo", :type => :string, :banner => 
-      "Chef configuration git repository URL."
+      :default => "/var/chef-solo",
+      :aliases => "-p"
+    method_option "cookbooks-rake-update", :type => :boolean, :banner =>
+      "Run rake update vs. git submodule init/update when updating cookbooks repo",
+      :default => false,
+      :aliases => "-u"
+    method_option "config-repo", :type => :string,
+      :banner => "Chef configuration git repository URL.",
+      :aliases => "-C"
     method_option "config-path", :type => :string,
       :banner => "Install path to chef configuration git repository.",
-      :default => "/etc/chef"
+      :default => "/etc/chef",
+      :aliases => "-P"
+    method_option "config-rake-update", :type => :boolean, :banner =>
+      "Run rake update vs. git submodule init/update when updating config repo",
+      :default => false,
+      :aliases => "-U"
     def execute(ssh_host)
       @ssh_host = ssh_host
       abort ">> HOST must be set" unless @ssh_host
@@ -103,14 +131,26 @@ module Capstrap
     end
 
     desc "update HOST", "Updates and executes chef solo on remote SSH host HOST"
-    method_option "ruby", :type => :string, :banner => 
-      "Version of ruby to install.", :default => "ree-1.8.7"
+    method_option "ruby", :type => :string,
+      :banner => "Version of ruby to install.",
+      :default => "ree-1.8.7",
+      :aliases => "-r"
     method_option "cookbooks-path", :type => :string,
       :banner => "Install path to chef cookbooks git repository.",
-      :default => "/var/chef-solo"
+      :default => "/var/chef-solo",
+      :aliases => "-p"
+    method_option "cookbooks-rake-update", :type => :boolean, :banner =>
+      "Run rake update vs. git submodule init/update when updating cookbooks repo",
+      :default => false,
+      :aliases => "-u"
     method_option "config-path", :type => :string,
       :banner => "Install path to chef configuration git repository.",
-      :default => "/etc/chef"
+      :default => "/etc/chef",
+      :aliases => "-P"
+    method_option "config-rake-update", :type => :boolean, :banner =>
+      "Run rake update vs. git submodule init/update when updating config repo",
+      :default => false,
+      :aliases => "-U"
     def update(ssh_host)
       @ssh_host = ssh_host
       abort ">> HOST must be set" unless @ssh_host
