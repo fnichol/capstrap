@@ -95,6 +95,14 @@ def config_repo_installed?
   cmd_test %{-d "#{config_path}"}
 end
 
+def update_cmd
+  if cookbooks_rake_update
+    %{rake update}
+  else
+    %{git submodule init && git submodule update}
+  end
+end
+
 ##
 # Prints an information message.
 #

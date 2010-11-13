@@ -22,12 +22,12 @@ module Capstrap
             task :cookbooks do
               unless cookbooks_repo_installed?
                 cmd = [
+                  %{use #{ruby}},
                   %{git clone #{cookbooks_repo} #{cookbooks_path}},
                   %{cd #{cookbooks_path}},
-                  %{git submodule init},
-                  %{git submodule update}
+                  update_cmd
                 ]
-                run cmd.join(" && ")
+                rvm_run cmd.join(" && ")
               end
             end
 
@@ -35,12 +35,12 @@ module Capstrap
             task :config do
               unless config_repo_installed?
                 cmd = [
+                  %{use #{ruby}},
                   %{git clone #{config_repo} #{config_path}},
                   %{cd #{config_path}},
-                  %{git submodule init},
-                  %{git submodule update}
+                  update_cmd
                 ]
-                run cmd.join(" && ")
+                rvm_run cmd.join(" && ")
               end
             end
           end
@@ -62,11 +62,9 @@ module Capstrap
                 %{use #{ruby}},
                 %{cd #{cookbooks_path}},
                 %{git pull},
-                %{git submodule init},
-                %{git submodule update},
+                update_cmd,
                 %{cd #{config_path}},
-                %{git submodule init},
-                %{git submodule update},
+                update_cmd,
                 %{cd},
                 %{chef-solo}
               ]

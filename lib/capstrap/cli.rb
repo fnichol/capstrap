@@ -186,13 +186,21 @@ module Capstrap
 
     def setup_config(options)
       [
-        {:sym => :ruby,           :opt => "ruby"},
-        {:sym => :cookbooks_repo, :opt => "cookbooks-repo"},
-        {:sym => :cookbooks_path, :opt => "cookbooks-path"},
-        {:sym => :config_repo,    :opt => "config-repo"},
-        {:sym => :config_path,    :opt => "config-path"}
+        {:sym => :ruby,                   :opt => "ruby"},
+        {:sym => :cookbooks_repo,         :opt => "cookbooks-repo"},
+        {:sym => :cookbooks_path,         :opt => "cookbooks-path"},
+        {:sym => :config_repo,            :opt => "config-repo"},
+        {:sym => :config_path,            :opt => "config-path"}
       ].each do |var|
         config.set(var[:sym], options[var[:opt]]) if options[var[:opt]]
+      end
+
+      # booleans
+      [
+        {:sym => :cookbooks_rake_update,  :opt => "cookbooks-rake-update"},
+        {:sym => :config_rake_update,     :opt => "config-rake-update"}
+      ].each do |var|
+        config.set(var[:sym], options[var[:opt]])
       end
     end
   end
