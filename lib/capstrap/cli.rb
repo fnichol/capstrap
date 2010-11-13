@@ -6,6 +6,11 @@ module Capstrap
     end
     
     default_task :help
+
+    desc "version", "Version of capstrap"
+    def version
+      puts "capstrap v#{Capstrap::VERSION}"
+    end
     
     desc "ruby HOST", "Install an RVM ruby on remote SSH host HOST"
     method_option "ruby", :type => :string, :banner => 
