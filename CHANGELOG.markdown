@@ -1,3 +1,10 @@
+# 0.2.2
+
+  * Add task method options for overriding git init/update behavior
+  * Add version task
+  * Update method_option from :banner to :desc (oops)
+  * Handle git submodule init/update or rake update strategies
+
 # 0.2.1
 
   * Add `update` task to pull new cookbook and configuration updates and re-run chef
