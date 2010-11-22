@@ -39,6 +39,13 @@ To override the default cookbooks and configuration paths:
       --config-repo=git://github.com/fnichol/chef-dna-spike.git \
       --config-path=/opt/chef/config
 
+To use a <code>rake update</code> instead of the default 
+<code>git submodule init && git submodule update</code> after a git update:
+
+  capstrap execute root@zland \
+    --cookbooks-rake-update \
+    --config-rake-update
+
 To execute a chef configuration (the full monty):
 
     capstrap execute root@zland \
@@ -57,6 +64,16 @@ To set some other crazy configuration (the full monty with cheese):
 To pull new cookbook/configuration updates and run chef-solo:
 
     capstrap update root@zland
+
+To save config options to a yaml file to be read by capstrap:
+
+    cat > "$HOME/.capstraprc" <<END_OF_CAPSTRAPRC
+    ---
+    cookbooks-repo: git://github.com/fnichol/chef-repo.git
+    cookbooks-rake-update: true
+    config-repo: git://github.com/fnichol/chef-dna-spike.git
+    config-rake-update: true
+    END_OF_CAPSTRAPRC
 
 To get more help:
 
