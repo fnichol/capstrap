@@ -1,3 +1,7 @@
+# 0.3.1
+
+  * Remove rvm_sugar installation (customization overkill).
+
 # 0.3.0
 
   * Add --config flag and read config from ~/.capstraprc by default.
