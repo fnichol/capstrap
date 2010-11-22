@@ -12,7 +12,7 @@ module Capstrap
               unless chef_installed?
                 cmd = [
                   %{use #{ruby}},
-                  %{gem install chef}
+                  %{gem install chef --no-rdoc --no-ri}
                 ]
                 rvm_run cmd.join(" && ")
               end
