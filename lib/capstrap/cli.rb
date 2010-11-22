@@ -17,29 +17,27 @@ module Capstrap
       "Version of ruby to install.", :default => "ree-1.8.7"
     method_option "default", :type => :boolean, :desc => 
       "Set this ruby to be RVM default."
+    method_option "config", :type => :string, 
+      :desc => "Read from alternative configuration.",
+      :default => File.join(ENV['HOME'], ".capstraprc"),
+      :aliases => "-f"
     def ruby(ssh_host)
       @ssh_host = ssh_host
-      abort ">> HOST must be set" unless @ssh_host
-
       setup_config options
-
-      config.find_and_execute_task "rvm:install:#{options[:ruby]}"
-      if options[:default]
-        config.find_and_execute_task "rvm:default:#{options[:ruby]}"
-      end
+      exec_ruby
     end
 
     desc "chef HOST", "Install chef gem on remote SSH host HOST"
     method_option "ruby", :type => :string, :desc => 
       "Version of ruby to install.", :default => "ree-1.8.7"
+    method_option "config", :type => :string, 
+      :desc => "Read from alternative configuration.",
+      :default => File.join(ENV['HOME'], ".capstraprc"),
+      :aliases => "-f"
     def chef(ssh_host)
       @ssh_host = ssh_host
-      abort ">> HOST must be set" unless @ssh_host
-
       setup_config options
-
-      invoke :ruby, [ssh_host], :ruby => options[:ruby], :default => true
-      config.find_and_execute_task "chef:install:lib"
+      exec_chef
     end
 
     desc "solo HOST", "Install chef cookbooks & config on remote SSH host HOST"
@@ -69,22 +67,15 @@ module Capstrap
       "Run rake update vs. git submodule init/update when updating config repo",
       :default => false,
       :aliases => "-U"
+    method_option "config", :type => :string, 
+      :desc => "Read from alternative configuration.",
+      :default => File.join(ENV['HOME'], ".capstraprc"),
+      :aliases => "-f"
     def solo(ssh_host)
       @ssh_host = ssh_host
-      abort ">> HOST must be set" unless @ssh_host
-
       setup_config options
-
-      unless options["cookbooks-repo"]
-        abort ">> --cookbooks-repo=<git_url> must be set" 
-      end
-      unless options["config-repo"]
-        abort ">> --config-repo=<git_url> must be set"
-      end
-
-      invoke :chef, [ssh_host], :ruby => options[:ruby], :default => true
-      config.find_and_execute_task "chef:install:cookbooks"
-      config.find_and_execute_task "chef:install:config"
+      assert_repos_set
+      exec_solo
     end
 
     desc "execute HOST", "Executes chef solo config on remote SSH host HOST"
@@ -114,25 +105,15 @@ module Capstrap
       "Run rake update vs. git submodule init/update when updating config repo",
       :default => false,
       :aliases => "-U"
+    method_option "config", :type => :string, 
+      :desc => "Read from alternative configuration.",
+      :default => File.join(ENV['HOME'], ".capstraprc"),
+      :aliases => "-f"
     def execute(ssh_host)
       @ssh_host = ssh_host
-      abort ">> HOST must be set" unless @ssh_host
-
       setup_config options
-
-      unless options["cookbooks-repo"]
-        abort ">> --cookbooks-repo=<git_url> must be set" 
-      end
-      unless options["config-repo"]
-        abort ">> --config-repo=<git_url> must be set"
-      end
-
-      invoke :solo, [ssh_host], :ruby => options[:ruby], :default => true,
-        :"cookbooks-repo" => options["cookbooks-repo"],
-        :"cookbooks-path" => options["cookbooks-path"],
-        :"config-repo" => options["config-repo"],
-        :"config-path" => options["config-path"]
-      config.find_and_execute_task "chef:execute:solo"
+      assert_repos_set
+      exec_execute
     end
 
     desc "update HOST", "Updates and executes chef solo on remote SSH host HOST"
@@ -156,16 +137,53 @@ module Capstrap
       "Run rake update vs. git submodule init/update when updating config repo",
       :default => false,
       :aliases => "-U"
+    method_option "config", :type => :string, 
+      :desc => "Read from alternative configuration.",
+      :default => File.join(ENV['HOME'], ".capstraprc"),
+      :aliases => "-f"
     def update(ssh_host)
       @ssh_host = ssh_host
-      abort ">> HOST must be set" unless @ssh_host
-
       setup_config options
-
-      config.find_and_execute_task "chef:execute:update"
+      exec_update
     end
 
   private
+
+    def assert_repos_set
+      unless config.fetch(:cookbooks_repo)
+        abort ">> --cookbooks-repo=<git_url> must be set" 
+      end
+      unless config.fetch(:config_repo)
+        abort ">> --config-repo=<git_url> must be set"
+      end
+    end
+
+    def exec_ruby
+      config.find_and_execute_task "rvm:install:#{config.fetch(:ruby)}"
+      if options[:default]
+        config.find_and_execute_task "rvm:default:#{config.fetch(:ruby)}"
+      end
+    end
+
+    def exec_chef
+      exec_ruby
+      config.find_and_execute_task "chef:install:lib"
+    end
+
+    def exec_solo
+      exec_chef
+      config.find_and_execute_task "chef:install:cookbooks"
+      config.find_and_execute_task "chef:install:config"
+    end
+
+    def exec_execute
+      exec_solo
+      config.find_and_execute_task "chef:execute:solo"
+    end
+
+    def exec_update
+      config.find_and_execute_task "chef:execute:update"
+    end
   
     def config
       @config ||= prep_config
@@ -184,7 +202,15 @@ module Capstrap
       config
     end
 
-    def setup_config(options)
+    def setup_config(cli_options)
+      abort ">> HOST must be set" unless @ssh_host
+
+      options = Hash.new
+      options.merge!(cli_options)
+      if File.exists?(options["config"])
+        options.merge!(YAML::load_file(options["config"])) 
+      end
+
       [
         {:sym => :ruby,                   :opt => "ruby"},
         {:sym => :cookbooks_repo,         :opt => "cookbooks-repo"},

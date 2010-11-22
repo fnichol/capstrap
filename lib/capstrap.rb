@@ -1,4 +1,5 @@
 require 'thor'
+require 'yaml'
 require 'capistrano'
 require 'capistrano/cli'
 
