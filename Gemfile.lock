@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    capstrap (0.0.1)
+    capstrap (0.3.0)
       capistrano (~> 2.5.19)
       thor (~> 0.14.3)
 
@@ -23,17 +23,16 @@ GEM
     net-ssh (2.0.23)
     net-ssh-gateway (1.0.1)
       net-ssh (>= 1.99.1)
-    rspec (2.0.1)
-      rspec-core (~> 2.0.1)
-      rspec-expectations (~> 2.0.1)
-      rspec-mocks (~> 2.0.1)
-    rspec-core (2.0.1)
-    rspec-expectations (2.0.1)
-      diff-lcs (>= 1.1.2)
-    rspec-mocks (2.0.1)
-      rspec-core (~> 2.0.1)
-      rspec-expectations (~> 2.0.1)
+    rspec (2.1.0)
+      rspec-core (~> 2.1.0)
+      rspec-expectations (~> 2.1.0)
+      rspec-mocks (~> 2.1.0)
+    rspec-core (2.1.0)
+    rspec-expectations (2.1.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.1.0)
     thor (0.14.3)
+    yard (0.6.3)
 
 PLATFORMS
   ruby
@@ -41,5 +40,6 @@ PLATFORMS
 DEPENDENCIES
   capistrano (~> 2.5.19)
   capstrap!
-  rspec (~> 2.0.0)
+  rspec (~> 2.1.0)
   thor (~> 0.14.3)
+  yard (~> 0.6.3)
