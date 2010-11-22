@@ -13,14 +13,8 @@ module Capstrap
     end
     
     desc "ruby HOST", "Install an RVM ruby on remote SSH host HOST"
-    method_option "ruby", :type => :string, :desc => 
-      "Version of ruby to install.", :default => "ree-1.8.7"
     method_option "default", :type => :boolean, :desc => 
       "Set this ruby to be RVM default."
-    method_option "config", :type => :string, 
-      :desc => "Read from alternative configuration.",
-      :default => File.join(ENV['HOME'], ".capstraprc"),
-      :aliases => "-f"
     def ruby(ssh_host)
       @ssh_host = ssh_host
       setup_config options
@@ -28,12 +22,6 @@ module Capstrap
     end
 
     desc "chef HOST", "Install chef gem on remote SSH host HOST"
-    method_option "ruby", :type => :string, :desc => 
-      "Version of ruby to install.", :default => "ree-1.8.7"
-    method_option "config", :type => :string, 
-      :desc => "Read from alternative configuration.",
-      :default => File.join(ENV['HOME'], ".capstraprc"),
-      :aliases => "-f"
     def chef(ssh_host)
       @ssh_host = ssh_host
       setup_config options
@@ -41,36 +29,6 @@ module Capstrap
     end
 
     desc "solo HOST", "Install chef cookbooks & config on remote SSH host HOST"
-    method_option "ruby", :type => :string, 
-      :desc => "Version of ruby to install.",
-      :default => "ree-1.8.7",
-      :aliases => "-r"
-    method_option "cookbooks-repo", :type => :string,
-      :desc => "Chef cookbooks git repository URL.",
-      :aliases => "-c"
-    method_option "cookbooks-path", :type => :string,
-      :desc => "Install path to chef cookbooks git repository.",
-      :default => "/var/chef-solo",
-      :aliases => "-p"
-    method_option "cookbooks-rake-update", :type => :boolean, :desc =>
-      "Run rake update vs. git submodule init/update when updating cookbooks repo",
-      :default => false,
-      :aliases => "-u"
-    method_option "config-repo", :type => :string,
-      :desc => "Chef configuration git repository URL.",
-      :aliases => "-C"
-    method_option "config-path", :type => :string,
-      :desc => "Install path to chef configuration git repository.",
-      :default => "/etc/chef",
-      :aliases => "-P"
-    method_option "config-rake-update", :type => :boolean, :desc =>
-      "Run rake update vs. git submodule init/update when updating config repo",
-      :default => false,
-      :aliases => "-U"
-    method_option "config", :type => :string, 
-      :desc => "Read from alternative configuration.",
-      :default => File.join(ENV['HOME'], ".capstraprc"),
-      :aliases => "-f"
     def solo(ssh_host)
       @ssh_host = ssh_host
       setup_config options
@@ -79,36 +37,6 @@ module Capstrap
     end
 
     desc "execute HOST", "Executes chef solo config on remote SSH host HOST"
-    method_option "ruby", :type => :string, 
-      :desc => "Version of ruby to install.",
-      :default => "ree-1.8.7",
-      :aliases => "-r"
-    method_option "cookbooks-repo", :type => :string,
-      :desc => "Chef cookbooks git repository URL.",
-      :aliases => "-c"
-    method_option "cookbooks-path", :type => :string,
-      :desc => "Install path to chef cookbooks git repository.",
-      :default => "/var/chef-solo",
-      :aliases => "-p"
-    method_option "cookbooks-rake-update", :type => :boolean, :desc =>
-      "Run rake update vs. git submodule init/update when updating cookbooks repo",
-      :default => false,
-      :aliases => "-u"
-    method_option "config-repo", :type => :string,
-      :desc => "Chef configuration git repository URL.",
-      :aliases => "-C"
-    method_option "config-path", :type => :string,
-      :desc => "Install path to chef configuration git repository.",
-      :default => "/etc/chef",
-      :aliases => "-P"
-    method_option "config-rake-update", :type => :boolean, :desc =>
-      "Run rake update vs. git submodule init/update when updating config repo",
-      :default => false,
-      :aliases => "-U"
-    method_option "config", :type => :string, 
-      :desc => "Read from alternative configuration.",
-      :default => File.join(ENV['HOME'], ".capstraprc"),
-      :aliases => "-f"
     def execute(ssh_host)
       @ssh_host = ssh_host
       setup_config options
@@ -117,34 +45,53 @@ module Capstrap
     end
 
     desc "update HOST", "Updates and executes chef solo on remote SSH host HOST"
-    method_option "ruby", :type => :string,
-      :desc => "Version of ruby to install.",
-      :default => "ree-1.8.7",
-      :aliases => "-r"
-    method_option "cookbooks-path", :type => :string,
-      :desc => "Install path to chef cookbooks git repository.",
-      :default => "/var/chef-solo",
-      :aliases => "-p"
-    method_option "cookbooks-rake-update", :type => :boolean, :desc =>
-      "Run rake update vs. git submodule init/update when updating cookbooks repo",
-      :default => false,
-      :aliases => "-u"
-    method_option "config-path", :type => :string,
-      :desc => "Install path to chef configuration git repository.",
-      :default => "/etc/chef",
-      :aliases => "-P"
-    method_option "config-rake-update", :type => :boolean, :desc =>
-      "Run rake update vs. git submodule init/update when updating config repo",
-      :default => false,
-      :aliases => "-U"
-    method_option "config", :type => :string, 
-      :desc => "Read from alternative configuration.",
-      :default => File.join(ENV['HOME'], ".capstraprc"),
-      :aliases => "-f"
     def update(ssh_host)
       @ssh_host = ssh_host
       setup_config options
       exec_update
+    end
+
+    [:ruby, :chef, :solo, :execute, :update].each do |task|
+      method_option "config", :for => task, :type => :string, 
+        :desc => "Read from alternative configuration.",
+        :default => File.join(ENV['HOME'], ".capstraprc"),
+        :aliases => "-f"
+
+      method_option "ruby", :for => task, :type => :string, 
+        :desc => "Version of ruby to install.", 
+        :default => "ree-1.8.7"
+    end
+
+    [:chef, :solo, :execute, :update].each do |task|
+      method_option "cookbooks-path", :for => task, :type => :string,
+        :desc => "Install path to chef cookbooks git repository.",
+        :default => "/var/chef-solo",
+        :aliases => "-p"
+
+      method_option "cookbooks-rake-update", :for => task, :type => :boolean,
+        :desc => "Run rake update vs. git submodule init/update when updating cookbooks repo",
+        :default => false,
+        :aliases => "-u"
+
+      method_option "config-path", :for => task, :type => :string,
+        :desc => "Install path to chef configuration git repository.",
+        :default => "/etc/chef",
+        :aliases => "-P"
+
+      method_option "config-rake-update", :for => task, :type => :boolean,
+        :desc => "Run rake update vs. git submodule init/update when updating config repo",
+        :default => false,
+        :aliases => "-U"
+    end
+
+    [:chef, :solo, :execute].each do |task|
+      method_option "cookbooks-repo", :for => task, :type => :string,
+        :desc => "Chef cookbooks git repository URL.",
+        :aliases => "-c"
+
+      method_option "config-repo", :for => task, :type => :string,
+        :desc => "Chef configuration git repository URL.",
+        :aliases => "-C"
     end
 
   private
