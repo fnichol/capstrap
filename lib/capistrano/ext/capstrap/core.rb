@@ -134,7 +134,6 @@ module Capstrap
             unless rvm_installed?
               apt.install.rvm_depends
               rvm.install.system_base
-              rvm.install.sugar
             end
             apt.install.mri_depends
             rvm.install.ree187

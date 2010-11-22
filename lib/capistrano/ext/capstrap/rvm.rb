@@ -22,19 +22,12 @@ module Capstrap
               end
             end
 
-            desc "Installs basic rvm/gem/irb configs."
-            task :sugar do
-              run %{bash < <( curl -L http://bit.ly/rvm_sugar )},
-                :shell => "bash"
-            end
-            
             RUBIES.each do |r|
               desc "Installs latest #{r.title} ruby."
               task r.ruby do
                 unless rvm_installed?
                   apt.install.rvm_depends
                   rvm.install.system_base
-                  rvm.install.sugar
                 end
                 unless ruby_installed?(r.ruby)
                   apt.install.mri_depends
