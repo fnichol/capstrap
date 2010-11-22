@@ -1,3 +1,8 @@
+# 0.3.0
+
+  * Add --config flag and read config from ~/.capstraprc by default.
+  * Refactor method_option blocks on tasks (dry it up).
+
 # 0.2.2
 
   * Add task method options for overriding git init/update behavior
