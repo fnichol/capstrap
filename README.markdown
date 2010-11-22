@@ -42,9 +42,9 @@ To override the default cookbooks and configuration paths:
 To use a <code>rake update</code> instead of the default 
 <code>git submodule init && git submodule update</code> after a git update:
 
-  capstrap execute root@zland \
-    --cookbooks-rake-update \
-    --config-rake-update
+    capstrap execute root@zland \
+      --cookbooks-rake-update \
+      --config-rake-update
 
 To execute a chef configuration (the full monty):
 
