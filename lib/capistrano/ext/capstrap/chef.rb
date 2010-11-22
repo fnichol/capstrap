@@ -11,7 +11,7 @@ module Capstrap
             task :lib do
               unless chef_installed?
                 cmd = [
-                  %{use #{ruby}@global},
+                  %{use #{ruby}},
                   %{gem install chef}
                 ]
                 rvm_run cmd.join(" && ")
