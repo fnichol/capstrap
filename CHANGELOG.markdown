@@ -1,3 +1,8 @@
+# 0.3.2
+
+  * Install chef gem to rvm default gemset rather than @global
+  * Install chef gem with --no-rdoc --no-ri
+
 # 0.3.1
 
   * Remove rvm_sugar installation (customization overkill).
