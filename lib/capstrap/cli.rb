@@ -13,42 +13,50 @@ module Capstrap
     end
     
     desc "ruby HOST", "Install an RVM ruby on remote SSH host HOST"
-    method_option "default", :type => :boolean, :desc => 
-      "Set this ruby to be RVM default."
     def ruby(ssh_host)
-      @ssh_host = ssh_host
-      setup_config options
-      exec_ruby
+      track_time do
+        @ssh_host = ssh_host
+        setup_config options
+        exec_ruby
+      end
     end
 
     desc "chef HOST", "Install chef gem on remote SSH host HOST"
     def chef(ssh_host)
-      @ssh_host = ssh_host
-      setup_config options
-      exec_chef
+      track_time do
+        @ssh_host = ssh_host
+        setup_config options
+        exec_chef
+      end
     end
 
     desc "solo HOST", "Install chef cookbooks & config on remote SSH host HOST"
     def solo(ssh_host)
-      @ssh_host = ssh_host
-      setup_config options
-      assert_repos_set
-      exec_solo
+      track_time do
+        @ssh_host = ssh_host
+        setup_config options
+        assert_repos_set
+        exec_solo
+      end
     end
 
     desc "execute HOST", "Executes chef solo config on remote SSH host HOST"
     def execute(ssh_host)
-      @ssh_host = ssh_host
-      setup_config options
-      assert_repos_set
-      exec_execute
+      track_time do
+        @ssh_host = ssh_host
+        setup_config options
+        assert_repos_set
+        exec_execute
+      end
     end
 
     desc "update HOST", "Updates and executes chef solo on remote SSH host HOST"
     def update(ssh_host)
-      @ssh_host = ssh_host
-      setup_config options
-      exec_update
+      track_time do
+        @ssh_host = ssh_host
+        setup_config options
+        exec_update
+      end
     end
 
     [:ruby, :chef, :solo, :execute, :update].each do |task|
@@ -172,6 +180,17 @@ module Capstrap
         {:sym => :config_rake_update,     :opt => "config-rake-update"}
       ].each do |var|
         config.set(var[:sym], options[var[:opt]])
+      end
+    end
+
+    def track_time(&block)
+      start = Time.now
+      yield
+      elapsed = Time.now - start
+      if elapsed < 60.0
+        puts "\n\n  * Elapsed time: #{(Time.now - start)} seconds.\n"
+      else
+        puts "\n\n  * Elapsed time: #{(Time.now - start) / 60.0} minutes.\n"
       end
     end
   end
