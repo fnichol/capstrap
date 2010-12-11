@@ -46,6 +46,12 @@ def apt_install(pkg, check=false)
   end
 end
 
+##
+# Updates package repository via apt-get.
+def apt_update
+  run %{apt-get update -y}
+end
+
 def rvm_env
   %{[[ -s "/usr/local/lib/rvm" ]] && source /usr/local/lib/rvm; }
 end

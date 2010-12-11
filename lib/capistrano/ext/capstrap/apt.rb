@@ -15,6 +15,14 @@ module Capstrap
         end
 
         namespace :apt do
+          desc "Resynchronizes the package index files."
+          task :update do
+            unless @updated
+              apt_update
+              @updated = true
+            end
+          end
+
           namespace :install do
             desc "Installs packages for running RVM"
             task :rvm_depends do
@@ -33,6 +41,9 @@ module Capstrap
             end
           end
         end
+
+        before "apt:install:rvm_depends", "apt:update"
+        before "apt:install:mri_depends", "apt:update"
       end
     end
   end
