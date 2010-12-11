@@ -1,3 +1,9 @@
+# 0.3.3
+
+  * Add call to apt-get update pre-package install
+  * Set ruby as rvm default by default (of course)
+  * Record the elapsed time on a capstrap execution.
+
 # 0.3.2
 
   * Install chef gem to rvm default gemset rather than @global
