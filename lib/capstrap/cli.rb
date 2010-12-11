@@ -107,9 +107,7 @@ module Capstrap
 
     def exec_ruby
       config.find_and_execute_task "rvm:install:#{config.fetch(:ruby)}"
-      if options[:default]
-        config.find_and_execute_task "rvm:default:#{config.fetch(:ruby)}"
-      end
+      config.find_and_execute_task "rvm:default:#{config.fetch(:ruby)}"
     end
 
     def exec_chef
