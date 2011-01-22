@@ -68,6 +68,10 @@ module Capstrap
       method_option "ruby", :for => task, :type => :string, 
         :desc => "Version of ruby to install.", 
         :default => "ree-1.8.7"
+
+      method_option "hostname", :for => task, :type => :string,
+        :desc => "Desired name of host.",
+        :aliases => "-h"
     end
 
     [:chef, :solo, :execute, :update].each do |task|
@@ -114,28 +118,40 @@ module Capstrap
     end
 
     def exec_ruby
+      exec_hostname unless @ran_exec_hostname
       config.find_and_execute_task "rvm:install:#{config.fetch(:ruby)}"
       config.find_and_execute_task "rvm:default:#{config.fetch(:ruby)}"
     end
 
     def exec_chef
+      exec_hostname unless @ran_exec_hostname
       exec_ruby
       config.find_and_execute_task "chef:install:lib"
     end
 
     def exec_solo
+      exec_hostname unless @ran_exec_hostname
       exec_chef
       config.find_and_execute_task "chef:install:cookbooks"
       config.find_and_execute_task "chef:install:config"
     end
 
     def exec_execute
+      exec_hostname unless @ran_exec_hostname
       exec_solo
       config.find_and_execute_task "chef:execute:solo"
     end
 
     def exec_update
+      exec_hostname unless @ran_exec_hostname
       config.find_and_execute_task "chef:execute:update"
+    end
+
+    def exec_hostname
+      if config.exists?(:host_name)
+        config.find_and_execute_task "hostname:set_hostname"
+      end
+      @ran_exec_hostname = true
     end
   
     def config
@@ -147,6 +163,7 @@ module Capstrap
       config.logger.level = Capistrano::Logger::TRACE
       config.role(:remote_host, @ssh_host)
       
+      Capstrap::Hostname.load_into(config)
       Capstrap::Apt.load_into(config)
       Capstrap::Core.load_into(config)
       Capstrap::RVM.load_into(config)
@@ -158,6 +175,7 @@ module Capstrap
     def setup_config(cli_options)
       abort ">> HOST must be set" unless @ssh_host
 
+      @ran_exec_hostname = false
       options = Hash.new
       options.merge!(cli_options)
       if File.exists?(options["config"])
@@ -169,7 +187,8 @@ module Capstrap
         {:sym => :cookbooks_repo,         :opt => "cookbooks-repo"},
         {:sym => :cookbooks_path,         :opt => "cookbooks-path"},
         {:sym => :config_repo,            :opt => "config-repo"},
-        {:sym => :config_path,            :opt => "config-path"}
+        {:sym => :config_path,            :opt => "config-path"},
+        {:sym => :host_name,              :opt => "hostname"}
       ].each do |var|
         config.set(var[:sym], options[var[:opt]]) if options[var[:opt]]
       end

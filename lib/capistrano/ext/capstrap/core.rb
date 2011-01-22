@@ -101,6 +101,14 @@ def config_repo_installed?
   cmd_test %{-d "#{config_path}"}
 end
 
+##
+# Checks if the hostname is current and correct.
+#
+# @param [String] desired hostname
+def hostname_correct?(host_name)
+  host_name == capture(%{hostname}).chomp
+end
+
 def update_cmd
   if cookbooks_rake_update
     %{rake update}
