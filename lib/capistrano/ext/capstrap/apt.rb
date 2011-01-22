@@ -3,9 +3,10 @@ module Capstrap
 
     APT_RVM_PKGS = %w{sed grep tar gzip bzip2 bash curl git-core}
     
-    APT_MRI_AND_REE_PKGS = %w{build-essential bison openssl libreadline5 
-      libreadline-dev zlib1g zlib1g-dev libssl-dev vim libsqlite3-0 
-      libsqlite3-dev sqlite3 libxml2-dev subversion autoconf ssl-cert}
+    APT_MRI_AND_REE_PKGS = %w{build-essential bison openssl libreadline6 
+      libreadline6-dev zlib1g zlib1g-dev libssl-dev libsqlite3-0 
+      libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev subversion autoconf
+      ssl-cert}
 
     def self.load_into(configuration)
       configuration.load do
