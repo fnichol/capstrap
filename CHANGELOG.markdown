@@ -1,3 +1,8 @@
+# 0.4.0
+
+  * Tweak RVM ubuntu package dependencies.
+  * Add --hostname flag to set remote hostname (duh).
+
 # 0.3.3
 
   * Add call to apt-get update pre-package install

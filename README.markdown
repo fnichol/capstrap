@@ -75,6 +75,10 @@ To save config options to a yaml file to be read by capstrap:
     config-rake-update: true
     END_OF_CAPSTRAPRC
 
+To set the remote hostname, use the --hostname flag:
+
+    capstrap solo root@zland --hostname=zland
+
 To get more help:
 
     capstrap help
