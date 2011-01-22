@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    capstrap (0.3.2)
+    capstrap (0.3.3)
       capistrano (~> 2.5.19)
       thor (~> 0.14.3)
 
