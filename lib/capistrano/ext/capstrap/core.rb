@@ -83,7 +83,7 @@ end
 # Checks if the chef gem is installed on the remote host.
 #
 def chef_installed?
-  cmd_if %{rvm use #{ruby}@global >/dev/null && gem list --no-versions | grep -q "^chef$" >/dev/null}, true
+  cmd_if %{rvm use #{ruby} >/dev/null && gem list --no-versions | grep -q "^chef$" >/dev/null}, true
 end
 
 
