@@ -1,3 +1,7 @@
+# 0.4.1
+
+  * Add hostname task and --domainname flag.
+  * Fix bug where rvm default@global is checked for chef gem.
 # 0.4.0
 
   * Tweak RVM ubuntu package dependencies.
