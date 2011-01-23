@@ -109,6 +109,35 @@ def hostname_correct?(host_name)
   host_name == capture(%{hostname}).chomp
 end
 
+##
+# Checks if the full qualified domain name is current and correct.
+#
+# @param [String] ip address of host
+# @param [String] desired host name
+# @param [String] desired domain name
+def fqdn_correct?(host_name, domain_name, ip_addr)
+  cmd_if %{egrep -q '^#{ip_addr}[[:space:]]+#{host_name}.#{domain_name}' /etc/hosts >/dev/null}
+end
+
+##
+# Retrieve the primary IP address of the host.
+#
+def fetch_primary_ip_address
+  capture(<<-GETADDR, :shell => "bash").chomp
+    _if="$(netstat -nr | grep ^0\.0\.0\.0 | awk '{print $8}')";
+    _ip="$(/sbin/ifconfig $_if | \
+      grep '^[[:space:]]*inet ' | awk '{print $2}' | \
+      awk -F':' '{print $2}')";
+
+    if [ -z "$_ip" -o "$_ip" == "" ] ; then
+      echo "";
+      return 10;
+    else
+      echo $_ip;
+    fi
+  GETADDR
+end
+
 def update_cmd
   if cookbooks_rake_update
     %{rake update}

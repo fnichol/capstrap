@@ -12,6 +12,15 @@ module Capstrap
       puts "capstrap v#{Capstrap::VERSION}"
     end
     
+    desc "hostname HOST", "Sets the FQDN on remote SSH host HOST"
+    def hostname(ssh_host)
+      track_time do
+        @ssh_host = ssh_host
+        setup_config options
+        exec_hostname
+      end
+    end
+
     desc "ruby HOST", "Install an RVM ruby on remote SSH host HOST"
     def ruby(ssh_host)
       track_time do
@@ -59,7 +68,15 @@ module Capstrap
       end
     end
 
-    [:ruby, :chef, :solo, :execute, :update].each do |task|
+    [:hostname, :ruby, :chef, :solo, :execute, :update].each do |task|
+      method_option "hostname", :for => task, :type => :string,
+        :desc => "Desired name of host.",
+        :aliases => "-h"
+
+      method_option "domainname", :for => task, :type => :string,
+        :desc => "Desired domain name of host.",
+        :aliases => "-d"
+
       method_option "config", :for => task, :type => :string, 
         :desc => "Read from alternative configuration.",
         :default => File.join(ENV['HOME'], ".capstraprc"),
@@ -68,10 +85,6 @@ module Capstrap
       method_option "ruby", :for => task, :type => :string, 
         :desc => "Version of ruby to install.", 
         :default => "ree-1.8.7"
-
-      method_option "hostname", :for => task, :type => :string,
-        :desc => "Desired name of host.",
-        :aliases => "-h"
     end
 
     [:chef, :solo, :execute, :update].each do |task|
@@ -148,10 +161,13 @@ module Capstrap
     end
 
     def exec_hostname
-      if config.exists?(:host_name)
-        config.find_and_execute_task "hostname:set_hostname"
-      end
+      exec_fqdn
+      config.find_and_execute_task "hostname:set_hostname"
       @ran_exec_hostname = true
+    end
+  
+    def exec_fqdn
+      config.find_and_execute_task "hostname:set_fqdn"
     end
   
     def config
@@ -188,7 +204,8 @@ module Capstrap
         {:sym => :cookbooks_path,         :opt => "cookbooks-path"},
         {:sym => :config_repo,            :opt => "config-repo"},
         {:sym => :config_path,            :opt => "config-path"},
-        {:sym => :host_name,              :opt => "hostname"}
+        {:sym => :host_name,              :opt => "hostname"},
+        {:sym => :domain_name,            :opt => "domainname"}
       ].each do |var|
         config.set(var[:sym], options[var[:opt]]) if options[var[:opt]]
       end
