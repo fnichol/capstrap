@@ -1,4 +1,8 @@
-# capstrap
+# capstrap (Abandoned)
+
+## Notice
+
+**This project has fallen out of use by the author and thus exists in an abandoned state.**
 
 A command to remotely install git, rvm, ruby, and chef-solo using capistrano.
 
